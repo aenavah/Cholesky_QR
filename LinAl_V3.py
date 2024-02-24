@@ -36,12 +36,12 @@ def Cholesky_backsub(A, dim, B):
   n_b = len(B[0])
   m = len(A)
   n = len(A[0])
-  # X = [] #size B 
-  # for tmp_0 in range(0, n_b):
-  #   tmp_list = []
-  #   for tmp_1 in range(0,m_b):
-  #     tmp_list.append("")
-  #   X.append(tmp_list)
+  X = [] #size B 
+  for tmp_0 in range(0, n_b):
+    tmp_list = []
+    for tmp_1 in range(0,m_b):
+      tmp_list.append("")
+    X.append(tmp_list)
 
   for column in range(0, n_b):
     x = []
@@ -57,7 +57,6 @@ def Cholesky_backsub(A, dim, B):
         for j in range(0,i-1):
           sum -= y[j]*A[i][j]
   print("b", b)
-
     
 if __name__ == "__main__":
   #visualizing data
