@@ -45,16 +45,20 @@ def Cholesky_backsub(A, dim, B):
 
   for column in range(0, n_b):
     x = []
+    y = []
     b = []
     for row in range(0, m_b):
-      tmp = []
-      tmpx= []
-      tmp.append(B[row][column])
-      tmpx.append(0)
-      b.append(tmp)
-      x.append(tmpx)
+      b.append(B[row][column])
+      x.append(0)
+      y.append(0)
       #here b and x are column vectors
+      for i in range(0,m):
+        sum = b[i]
+        for j in range(0,i-1):
+          sum -= y[j]*A[i][j]
+  print("b", b)
 
+    
 if __name__ == "__main__":
   #visualizing data
   data = "atkinson.dat"
@@ -65,8 +69,8 @@ if __name__ == "__main__":
   #Cholesky
   A = get_matrix(data).tolist() #we dont like numpy anymore, list of list 
   Test = [[6,15,25],[15,55,225],[55,225,979]]
-  #Cholesky_Decomp(Test, " ") #Good!
+  L = Cholesky_Decomp(Test, " ") #Good!
   #Q: check if singular? 
   Test2 = [[6,15,25],[15,55,225]]
-  Cholesky_backsub(A, 2, Test2)
+  Cholesky_backsub(L, 2, Test2)
 
