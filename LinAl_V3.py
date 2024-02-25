@@ -30,34 +30,39 @@ def Cholesky_Decomp(A, problem):
         A[i][j] -= A[i][k_2]*A[j][k_2]
       A[i][j]/=A[j][j]
   print(A)
+  return A
 
-def Cholesky_backsub(A, dim, B):
-  m_b = len(B)
-  n_b = len(B[0])
-  m = len(A)
-  n = len(A[0])
-  X = [] #size B 
-  for tmp_0 in range(0, n_b):
-    tmp_list = []
-    for tmp_1 in range(0,m_b):
-      tmp_list.append("")
-    X.append(tmp_list)
+def Cholesky_backsub(L, dim, B):
+  m_b, n_b = np.array(B).shape
+  m, n = np.array(L).shape
+  X = np.zeros_like(B).tolist() #size B
+  Y = np.zeros_like(B).tolist() 
+  #print(X)
 
-  for column in range(0, n_b):
-    x = []
-    y = []
-    b = []
-    for row in range(0, m_b):
-      b.append(B[row][column])
-      x.append(0)
-      y.append(0)
-      #here b and x are column vectors
-      for i in range(0,m):
-        sum = b[i]
-        for j in range(0,i-1):
-          sum -= y[j]*A[i][j]
-  print("b", b)
-    
+  for column in range(0, n_b):#iterating through vectors of B 
+    #forward sub
+    for i in range(0, m):
+      summ = B[i][column]
+      #print("sum", summ)
+      for j in range(0, i-1):
+        summ -= Y[j][column]*L[i][j]
+        #print("sum in loop", summ)
+      #print("sum after loop", summ)
+      #print("L", L[i][i])
+      Y[i][column] = summ/L[i][i]
+      #print("new Y value", summ/L[i][i])
+      #print("actual Y", Y[i][column])
+    print("yfirst", Y[0][0])
+    #backward sub 
+    for i in range(m-1,-1,-1):
+      #print("i", i)
+      if np.conjugate(L[i][i]) == 0:
+        return 
+      for k in range(i+1, m):
+        Y[i][column] -= np.conjugate(L[k][i])*X[k][column]
+      X[i][column] = Y[i][column]/np.conjugate(L[i][i])
+    return Y, X
+ 
 if __name__ == "__main__":
   #visualizing data
   data = "atkinson.dat"
@@ -70,6 +75,11 @@ if __name__ == "__main__":
   Test = [[6,15,25],[15,55,225],[55,225,979]]
   L = Cholesky_Decomp(Test, " ") #Good!
   #Q: check if singular? 
-  Test2 = [[6,15,25],[15,55,225]]
-  Cholesky_backsub(L, 2, Test2)
+  Test2 = [[1,2,3],[4,5,6],[7,8,9]]
+  print("L", np.array(L))
+  Y, X = Cholesky_backsub(L, 2, Test2)
+  B = np.array()
+  y_2 = B[0][2]
+  
 
+  
