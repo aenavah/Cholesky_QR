@@ -29,7 +29,7 @@ def Cholesky_Decomp(A, problem):
       for k_2 in range(0,j):
         A[i][j] -= A[i][k_2]*A[j][k_2]
       A[i][j]/=A[j][j]
-  print(A)
+  #print(A)
   return A
 
 def Cholesky_backsub(L, dim, B):
@@ -40,28 +40,22 @@ def Cholesky_backsub(L, dim, B):
   #print(X)
 
   for column in range(0, n_b):#iterating through vectors of B 
-    #forward sub
-    for i in range(0, m):
+    #forward sub 
+    for i in range(0,m):
       summ = B[i][column]
-      #print("sum", summ)
-      for j in range(0, i-1):
-        summ -= Y[j][column]*L[i][j]
-        #print("sum in loop", summ)
-      #print("sum after loop", summ)
-      #print("L", L[i][i])
+      for j in range(0,i):
+        summ -= Y[j][column]*L[i][j]  
       Y[i][column] = summ/L[i][i]
-      #print("new Y value", summ/L[i][i])
-      #print("actual Y", Y[i][column])
-    print("yfirst", Y[0][0])
-    #backward sub 
-    for i in range(m-1,-1,-1):
-      #print("i", i)
-      if np.conjugate(L[i][i]) == 0:
-        return 
+    #backsub
+    for i in range(m-1, -1, -1):
+      print("i", i+1)
       for k in range(i+1, m):
-        Y[i][column] -= np.conjugate(L[k][i])*X[k][column]
+        print("k", k+1)
+        Y[i][column] = Y[i][column] - np.conjugate(L[k][i])*X[k][column]
       X[i][column] = Y[i][column]/np.conjugate(L[i][i])
     return Y, X
+
+
  
 if __name__ == "__main__":
   #visualizing data
@@ -72,14 +66,14 @@ if __name__ == "__main__":
 
   #Cholesky
   A = get_matrix(data).tolist() #we dont like numpy anymore, list of list 
+  #decomp 
   Test = [[6,15,25],[15,55,225],[55,225,979]]
   L = Cholesky_Decomp(Test, " ") #Good!
-  #Q: check if singular? 
-  Test2 = [[1,2,3],[4,5,6],[7,8,9]]
-  print("L", np.array(L))
+    #Q: check if singular?
+  #backsub 
+  Test2 = [[1,2,3],[5,5,6],[8,10,9]]
   Y, X = Cholesky_backsub(L, 2, Test2)
-  B = np.array()
-  y_2 = B[0][2]
-  
-
-  
+  print("X--", X)
+  print((Y[1][0] - L[1][0]*(Y[0][0]/L[0][0]))/L[1][1]) #should be x10 but its NOT
+  #backsub works fine, X[0][0] is found fine, after is sad
+  # testing backsub by multplying random Y and L and checking if = B print(L[2][0]*Y[0][1] + L[2][1]*Y[1][1] + L[2][2]*Y[2][1])
