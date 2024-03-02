@@ -18,6 +18,9 @@ def get_matrix(myFileName):
   
 '''Input: square A, singular: binary, spd by using decomposition'''
 def Cholesky_Decomposition(A, singular, spd):
+  if type(A) == np.ndarray:
+    A.tolist()
+  spd = True
   singular == False
   n = len(A)#rows
   m = len(A[0])#columns
@@ -28,19 +31,20 @@ def Cholesky_Decomposition(A, singular, spd):
       A[j][j] = A[j][j]**(1/2)
     else:
       singular = True
+      spd = False
     for i in range(j+1, m):
       for k_2 in range(0,j):
         A[i][j] -= A[i][k_2]*A[j][k_2]
       A[i][j]/=A[j][j]
-  return A
+  return A, singular, spd 
 
 '''
-LU substitution: 
+cholesky substitution: 
 Forward substitution solves for y st Ly = b 
 backward substitution solves for L^{*}x=y
 '''
 def Substitution(LU, b):
-  print("Performing substitution...")
+  singular = False
   L = np.tril(LU)
   Lstar = np.transpose(L)
   #print(L@Lstar) #returns A, -> decomp works 
@@ -55,7 +59,6 @@ def Substitution(LU, b):
       summ -= y[j]*L[i,j]
     y[i] = summ/L[i,i]
   #print(L@y, b) #returns b -> forward sub works 
-  print("Completed forward substitution...")
 
   ### Backward Substitution
   for i in range(m - 1, -1, -1):
@@ -64,8 +67,19 @@ def Substitution(LU, b):
     for k in range(i + 1, m):
       y[i] -= Lstar[i, k] * x[k] 
     x[i] = y[i] / Lstar[i,i]
-  print("Completed backward substitution...")
-  return x
+  return x, singular
+
+def Vandermonde(x):
+  print(x)
+  m = len(x)
+  V = np.zeros((m, m))
+  V[:,0] = 1
+  for i in range(0, m): #power
+    if i == 0: #fill first column with ones
+        continue
+    for j in range(0, m): #x
+      V[i, j] = x[i]**j
+  return V
 
   
   

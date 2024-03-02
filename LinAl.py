@@ -18,6 +18,7 @@ def get_matrix(myFileName):
   
 '''Input: square A, singular: binary, spd by using decomposition'''
 def Cholesky_Decomposition(A, singular, spd):
+  print("Performing decomposition...")
   singular == False
   n = len(A)#rows
   m = len(A[0])#columns
@@ -28,11 +29,12 @@ def Cholesky_Decomposition(A, singular, spd):
       A[j][j] = A[j][j]**(1/2)
     else:
       singular = True
+      return A, singular
     for i in range(j+1, m):
       for k_2 in range(0,j):
         A[i][j] -= A[i][k_2]*A[j][k_2]
       A[i][j]/=A[j][j]
-  return A
+  return A, singular
 
 '''
 LU substitution: 
@@ -50,6 +52,7 @@ def Substitution(LU, b):
 
   ### Forward Substitution 
   for i in range(0, m):
+    singular = False
     summ = b[i]
     for j in range(i):
       summ -= y[j]*L[i,j]
@@ -61,6 +64,7 @@ def Substitution(LU, b):
   for i in range(m - 1, -1, -1):
     if L[i,i] <= emach:
       singular = True
+      return x, singular
     for k in range(i + 1, m):
       y[i] -= Lstar[i, k] * x[k] 
     x[i] = y[i] / Lstar[i,i]
