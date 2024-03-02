@@ -64,6 +64,8 @@ def Substitution(LU, b):
   for i in range(m - 1, -1, -1):
     if L[i,i] <= emach:
       singular = True
+    if Lstar[i,i] <= emach:
+      singular = True
     for k in range(i + 1, m):
       y[i] -= Lstar[i, k] * x[k] 
     x[i] = y[i] / Lstar[i,i]
