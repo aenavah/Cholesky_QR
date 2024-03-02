@@ -36,11 +36,12 @@ def Substitution(A, b):
   m,n = np.shape(A)
   x = np.zeros(m)
   y = np.zeros(m)
+  ###Forward Substitution, solving Ly = b 
   for i in range(0,m):
     summ = b[i]
     for j in range(i):
       summ -= y[j]*L[i,j]
     y[i] = summ/L[i,i]
-    #y[i] = (b[i] - np.sum(L[i,:i] * y[:i]))/L[i,i]all together
-  print(y)
+    #y[i] = (b[i] - np.sum(L[i,:i] * y[:i]))/L[i,i]#all together
+  print("yayyyy good forward sub")
 
