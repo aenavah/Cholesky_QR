@@ -3,10 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 #module:
-import LinAl
-cholesky_decomp = LinAl.Cholesky_Decomposition
-get_data = LinAl.get_matrix = LinAl.Substitution
-chol_sub = LinAl.Substitution
+import Cholesky
+cholesky_decomp = Cholesky.Cholesky_Decomposition
+get_data = Cholesky.get_matrix = Cholesky.Substitution
+chol_sub = Cholesky.Substitution
 
 def cholesky_solve(A,B):
   A = np.array(A)
