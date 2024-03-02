@@ -30,18 +30,36 @@ def Cholesky_Decomposition(A, singular, spd):
       A[i][j]/=A[j][j]
   return A
 
-'''LU substitution'''
-def Substitution(A, b):
-  L = np.tril(A)
-  m,n = np.shape(A)
+'''
+LU substitution: 
+Forward substitution solves for y st Ly = b 
+backward substitution solves for L^{*}x=y
+'''
+def Substitution(LU, b):
+  print("Performing substitution...")
+  L = np.tril(LU)
+  Lstar = np.transpose(L)
+  #print(L@Lstar) #returns A, -> decomp works 
+  m,n = np.shape(LU)
   x = np.zeros(m)
   y = np.zeros(m)
-  ###Forward Substitution, solving Ly = b 
+
+  ### Forward Substitution 
   for i in range(0,m):
     summ = b[i]
     for j in range(i):
       summ -= y[j]*L[i,j]
     y[i] = summ/L[i,i]
-    #y[i] = (b[i] - np.sum(L[i,:i] * y[:i]))/L[i,i]#all together
-  print("yayyyy good forward sub")
+  #print(L@y, b) #returns b -> forward sub works 
+  print("Completed forward substitution...")
 
+  ### Backward Substitution
+  for i in range(m - 1, -1, -1):
+    for k in range(i + 1, m):
+      y[i] -= Lstar[i, k] * x[k] 
+    x[i] = y[i] / Lstar[i,i]
+  print("Completed backward substitution...")
+  return x
+
+  
+  
