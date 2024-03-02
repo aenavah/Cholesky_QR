@@ -40,7 +40,7 @@ if __name__== "__main__":
       b = B[:, column] 
       x = chol_sub(LU, b)
       X.append(x)
-    X = np.array.tranpose(X)
+    X = np.array(X)
     X = np.transpose(X)
   #print(A_original@X) #returns B, -> sub works
 
