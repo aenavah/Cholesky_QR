@@ -8,6 +8,7 @@ cholesky_decomp = Cholesky.Cholesky_Decomposition
 get_data = Cholesky.get_matrix = Cholesky.Substitution
 chol_sub = Cholesky.Substitution
 vandermonde = Cholesky.Vandermonde
+#overdetermined = Cholesky.overdetermined
 
 def cholesky_solve(A,B):
   A = np.array(A)
@@ -31,41 +32,62 @@ def cholesky_solve(A,B):
   return A_original, X, singular, spd 
 
 if __name__== "__main__":
-  A = [[2.0, -1.0, 0.0], 
+  Test_A = [[2.0, -1.0, 0.0], 
        [-1.0, 2.0, -1.0],
        [0.0, -1.0, 2.0]]
-  B = [[2,1],
+  Test_B = [[2,1],
        [-4,-2],
        [3,5]]
   
   perform_cholesky_test = 0
-  show_plot = 0
-  polyfitting = 1
+  show_ogplot = 1
+  polyfitting_plot = 1
 
   'cholesky----------'
   if perform_cholesky_test == 0:
-    A_original, X, singular, spd  = cholesky_solve(A,B)
+    A0_test, X_test, singular, spd  = cholesky_solve(Test_A,Test_B)
   #print(A_original @ X) #returns B, -> sub works
 
   data = "atkinson.dat"
   dd = np.loadtxt(data, skiprows = 0)
-  dd = np.array(dd)
+  data = np.array(dd).copy()
   'visualizing data'
-  if show_plot == 1:
+
+
+  if show_ogplot == 0:
     plt.plot(dd[:,0], dd[:,1],'o-')
     plt.show()
 
-  if polyfitting == 1:
-    #test = np.array([[0, 10],[1, -2],[2, 3],[3, -10],[4, 16]]) 
-    #test = vandermonde(test[:, 0]) #-> works
-    x_coords = dd[:, 0]
-    y_coords = dd[:, 1]
-    X_v = vandermonde(x_coords)
-    print(X_v)
-    Y_v = vandermonde(y_coords)
-    print(Y_v)
-    A_original, sol, singular, spd = cholesky_solve(X_v, Y_v)
-    #print(sol)
-    #print(np.linalg.norm(sol))
-    #print(dd)
+  if polyfitting_plot == 1:
+    test = np.array([[0.0, 10.0],
+                     [1.0, -2.0],
+                     [2.0, 3.0],
+                     [3.0, -10.0],
+                     [4.0, 16.0]]) 
+    #test = vandermonde(test[:, 0]) # -> works https://developer.apple.com/documentation/accelerate/finding_an_interpolating_polynomial_using_the_vandermonde_method
+
+    #data = test #testing
+    xs = data[:, 0].copy()
+    print("xs from data:", xs)
+    b_row = data[:, 1].copy()
+    b_copy = b_row.reshape(-1,1).copy()
+    print("b from data:", b_copy)
+
+    V = vandermonde(xs, 5).copy()
+    #V = np.vander(xs, 5)
+    print("Vandermonde of x:", V)
+    VT = np.transpose(V).copy()
+    print("Vandermonde transpose of x:", VT)
+
+    #V^T @ V
+    VT_V = np.dot(VT,V) #checked by calc -> correct
+    VT_b = np.dot(VT,b_copy) #checked by calc -> correct
+
+    #cholesky decomposition on V^T V 
+    L_LT, singular, spd = cholesky_decomp(VT_V, "", "") #checked by calculator! 
+    coefs, singular = chol_sub(L_LT, VT_b)
+    print(VT_V)
+    print(len(xs))
+    plt.plot(xs, np.dot(V,coefs), "o-")
+    plt.show()
 

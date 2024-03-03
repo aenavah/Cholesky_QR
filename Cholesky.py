@@ -44,9 +44,11 @@ Forward substitution solves for y st Ly = b
 backward substitution solves for L^{*}x=y
 '''
 def Substitution(LU, b):
+  print()
+  b_copy = b.copy()
   singular = False
-  L = np.tril(LU)
-  Lstar = np.transpose(L)
+  L = np.tril(LU).copy()
+  Lstar = np.transpose(L).copy()
   #print(L@Lstar) #returns A, -> decomp works 
   m,n = np.shape(LU)
   x = np.zeros(m)
@@ -58,7 +60,8 @@ def Substitution(LU, b):
     for j in range(i):
       summ -= y[j]*L[i,j]
     y[i] = summ/L[i,i]
-  #print(L@y, b) #returns b -> forward sub works 
+  #print(L@y) #returns b -> forward sub works 
+  #print(y) # -> to confirm backsub works
 
   ### Backward Substitution
   for i in range(m - 1, -1, -1):
@@ -69,19 +72,14 @@ def Substitution(LU, b):
     for k in range(i + 1, m):
       y[i] -= Lstar[i, k] * x[k] 
     x[i] = y[i] / Lstar[i,i]
+  #print(Lstar @ x) #returns y -> backsub works
   return x, singular
 
-def Vandermonde(x):
-  print(x)
-  m = len(x)
-  V = np.zeros((m, m))
-  V[:,0] = 1
-  for i in range(0, m): #power
-    if i == 0: #fill first column with ones
-        continue
-    for j in range(0, m): #x
-      V[i, j] = x[i]**j
-  return V
+def Vandermonde(x, degree):
+    num_samples = len(x)
+    V = np.zeros((num_samples, degree + 1))
 
-  
-  
+    for i in range(num_samples):
+        for j in range(degree + 1):
+            V[i, j] = x[i] ** j
+    return V
