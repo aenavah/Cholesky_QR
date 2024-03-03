@@ -83,3 +83,7 @@ def Vandermonde(x, degree):
         for j in range(degree + 1):
             V[i, j] = x[i] ** j
     return V
+
+def frobenius_norm(matrix):
+  f = np.sqrt(np.sum(matrix**2))
+  return f
