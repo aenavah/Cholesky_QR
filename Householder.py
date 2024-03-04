@@ -28,15 +28,39 @@ def householder(A):
 
       A = A - 2 * (vj @ vj_T @ A)
       Q = Q @ (np.eye(m) - 2 *(vj @ vj_T))
-    R = A
+    R = np.triu(A)
     return Q, R
 
-test = np.array([
-    [1, 2],
-    [3, 4],
-    [5, 6]])
+def backsub(U, b):
+  print(np.shape(U))
+  print(np.shape(b))
+  m,n = np.shape(b)
+  x = np.zeros_like(b)
+  print(np.shape(x))
+  for i in range(n - 1, -1, -1):
+    summ = 0.0
+    for k in range(i+1, n):
+       summ += U[i,k]*x[k]
+    x[i] = (b[i] - summ)/U[i,i]
+  return x
 
-Q_mine, R_mine = householder(test)
+def vandermonde(x, degree):
+  num_samples = len(x)
+  V = np.zeros((num_samples, degree + 1))
+
+  for i in range(num_samples):
+      for j in range(degree + 1):
+        V[i, j] = x[i] ** j
+  return V
+
+def frobenius_norm(matrix):
+  f = np.sqrt(np.sum(matrix**2))
+  return f
+
+
+#test = np.array([[1, 2], [3, 4]])
+#Q_mine, R_mine = householder(test)
 #Q, R = scipy.linalg.qr(test)
-#print(Q_mine @ R_mine) # = A -> right 
-
+#print(Q)
+# #print(Q_mine @ R_mine) # = A -> right 
+# backsub(R_mine, Q@test[:, 0].reshape(-1, 1))
