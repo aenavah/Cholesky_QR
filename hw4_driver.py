@@ -102,6 +102,11 @@ if __name__== "__main__":
   print("\nQ^TQ - I :")
   print((Q@Q.T) - np.eye(np.size(Q[0])))
 
+  #||Q^TQ - I||
+  print("\n||Q^TQ - I|| :")
+  print(frobenius((Q@Q.T) - np.eye(np.size(Q[0]))))
+
+  #Couldn't reduce it :(
   #reduce Q and R:
   m_r,n_r = np.shape(R)
   for i in range(m_r):
@@ -109,14 +114,5 @@ if __name__== "__main__":
       index = i
       break 
   #R_hat = R[0:index, :]
-  #Q_hat = Q[:, 0:index]
-  #Q = np.transpose(Q)
-  Q[:, index:] = 0.0
-  print("Q----")
-  print(Q)
-  print(frobenius(V-(Q @ R))) # = approx 0 -> good
-
-  print("---------")
-  x = backsub(R, Q@b)
-  print(x)
-  #print(x)
+  #Q_hat = Q[:, 0:index].copy
+  #Q[:, index:] = 0.0
