@@ -5,6 +5,7 @@ import numpy as np
 import scipy.linalg
 
 def householder(A):
+
   m, n = np.shape(A)
   
   Q = np.eye(m)
@@ -28,20 +29,22 @@ def householder(A):
 
     A = A - 2 * (vj @ vj_T @ A)
     Q = Q @ (np.eye(m) - 2 *(vj @ vj_T))
+ 
   R = np.triu(A)
   return Q, R
 
-def backsub(U, b, index):
-  #print(np.shape(U))
-  #print(np.shape(b))
-  m,n = np.shape(b)
+def backsub(U, b):
+
+  m, n = np.shape(b)
   x = np.zeros_like(b)
-  print(np.shape(x))
-  for i in range(n - 1, -1, -1):
+
+  x[m-1,0] = b[m-1,0]/U[m-1,m-1]
+  
+  for i in range(m - 1, -1, -1):
     summ = 0.0
-    for k in range(i+1, n):
-       summ += U[i,k]*x[k]
-    x[i] = (b[i] - summ)/U[i,i]
+    for k in range(i+1, m):
+      summ += U[i,k] * x[k,0]
+    x[i,0] = (b[i,0] - summ)/U[i,i]
   return x
 
 def vandermonde(x, degree):
@@ -56,11 +59,3 @@ def vandermonde(x, degree):
 def frobenius_norm(matrix):
   f = np.sqrt(np.sum(matrix**2))
   return f
-
-
-#test = np.array([[1, 2], [3, 4]])
-#Q_mine, R_mine = householder(test)
-#Q, R = scipy.linalg.qr(test)
-#print(Q)
-# #print(Q_mine @ R_mine) # = A -> right 
-# backsub(R_mine, Q@test[:, 0].reshape(-1, 1))

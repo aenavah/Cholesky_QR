@@ -40,7 +40,7 @@ frobenius = Householder.frobenius_norm
 #   return A_original, X, singular, spd 
 
 if __name__== "__main__":
-
+  np.set_printoptions(precision = 2) #no ugly 
   data = "atkinson.dat"
   dd = np.loadtxt(data, skiprows = 0)
   data = np.array(dd).copy()
@@ -86,6 +86,7 @@ if __name__== "__main__":
 
   xs = data[:, 0].copy()
   b = data[:, 1].reshape(-1,1).copy()
+
   V = vandermonde(xs, 3)
   Q, R = householder(V) #Q orthogonal, R upper triangular #Q IS TRANSPOSE ALREADY
 
@@ -113,6 +114,17 @@ if __name__== "__main__":
     if sum(R[i,:]) == 0:
       index = i
       break 
-  #R_hat = R[0:index, :]
-  #Q_hat = Q[:, 0:index].copy
-  #Q[:, index:] = 0.0
+
+  Q_copy = Q.copy()
+  R_copy = R.copy()
+
+  R_hat = R[:i, :]
+  Q_hat = Q[:, :i] #is my Q not tranpose?
+
+  # Solving Rhat@x = Qhat.T@b:
+  # if "np_qr" == "np_qr": #comparing numpy reduced with my reduced 
+    #Q_sp, R_sp = np.linalg.qr(V, mode = "reduced") 
+    #print(frobenius(Q_hat - Q_sp))
+
+  x_sol = backsub(R_hat, Q_hat.T @ b)
+  print(x_sol) 
