@@ -40,14 +40,14 @@ frobenius = Householder.frobenius_norm
 #   return A_original, X, singular, spd 
 
 if __name__== "__main__":
-  np.set_printoptions(precision = 2) #no ugly 
+  #np.set_printoptions(precision = 2) #no ugly 
   data = "atkinson.dat"
   dd = np.loadtxt(data, skiprows = 0)
   data = np.array(dd).copy()
 
   '''Q1'''
   show_ogplot = 0 #to show plot before polynomial fitting
-  polyfitting_plot = 0 #show fitted plot
+  polyfitting_plot = 0 #Cholesky off 
 
 
   if show_ogplot == 1:
@@ -59,7 +59,7 @@ if __name__== "__main__":
     b_row = data[:, 1].copy()
     b_copy = b_row.reshape(-1,1).copy()
 
-    poly = 5
+    poly = 3
     V = vandermonde(xs, poly).copy()
     VT = np.transpose(V).copy()
 
@@ -67,10 +67,14 @@ if __name__== "__main__":
     VT_V = np.dot(VT,V)      # checked by calc -> correct
     VT_b = np.dot(VT,b_copy) # checked by calc -> correct
 
+    VT_V_c = VT_V.copy()
+    VT_b_c = VT_b.copy()
     # Cholesky Decomposition on V^T V 
     L_LT, singular, spd = cholesky_decomp(VT_V, "", "") #checked by calculator! 
     coefs, singular = chol_sub(L_LT, VT_b)
 
+    coefs_c = coefs.copy()
+    L_LT_c = L_LT.copy()
     # Coefficients and Plot
     print("Coefficients of the polynomial with degree " + str(poly) + ":")
     print(coefs)
@@ -79,15 +83,18 @@ if __name__== "__main__":
     plt.xlabel("X-axis")
     plt.ylabel("Y-axis")
     plt.title(str(poly) + " degree polynomial of Atkinson data")
-    plt.show()
+    #plt.show()
+
+    #norm of V^TV@x - V^T@y
+    print("----------------------------------")
 
     '''Q2'''
-  poly = 3
+  poly = 5
 
   xs = data[:, 0].copy()
   b = data[:, 1].reshape(-1,1).copy()
 
-  V = vandermonde(xs, 3)
+  V = vandermonde(xs, poly)
   Q, R = householder(V) #Q orthogonal, R upper triangular #Q IS TRANSPOSE ALREADY
 
   #A - QR
@@ -107,7 +114,6 @@ if __name__== "__main__":
   print("\n||Q^TQ - I|| :")
   print(frobenius((Q@Q.T) - np.eye(np.size(Q[0]))))
 
-  #Couldn't reduce it :(
   #reduce Q and R:
   m_r,n_r = np.shape(R)
   for i in range(m_r):
@@ -119,12 +125,25 @@ if __name__== "__main__":
   R_copy = R.copy()
 
   R_hat = R[:i, :]
-  Q_hat = Q[:, :i] #is my Q not tranpose?
+  Q_hat = Q[:, :i] # is my Q not tranpose?
 
   # Solving Rhat@x = Qhat.T@b:
-  # if "np_qr" == "np_qr": #comparing numpy reduced with my reduced 
-    #Q_sp, R_sp = np.linalg.qr(V, mode = "reduced") 
-    #print(frobenius(Q_hat - Q_sp))
 
+  # if "np_qr" == "np_qr": #comparing numpy reduced with my reduced 
+    # Q_sp, R_sp = np.linalg.qr(V, mode = "reduced") 
+    # print(frobenius(Q_hat - Q_sp))
+
+  print("\nSolution x of Rhat@x = Qhat^T@b :")
   x_sol = backsub(R_hat, Q_hat.T @ b)
-  print(x_sol) 
+  x_sol_T = x_sol.reshape(1, -1)
+  print(x_sol_T) 
+
+  print("\n||Rhat@x - Qhat^T@b||:")
+  print(frobenius(R_hat @ x_sol - Q_hat.T @ b))
+
+  plt.plot(xs, np.dot(V,x_sol), color = "pink")
+  plt.scatter(xs, b, color = "black", s = 3)
+  plt.xlabel("X-axis")
+  plt.ylabel("Y-axis")
+  plt.title("Degree " + str(poly) + " polynomial of Atkinson data with Householder Method")
+  #plt.show()

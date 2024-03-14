@@ -38,13 +38,13 @@ def backsub(U, b):
   m, n = np.shape(b)
   x = np.zeros_like(b)
 
-  x[m-1,0] = b[m-1,0]/U[m-1,m-1]
+  x[m-1, 0] = b[m-1, 0]/U[m-1, m-1]
   
   for i in range(m - 1, -1, -1):
     summ = 0.0
     for k in range(i+1, m):
-      summ += U[i,k] * x[k,0]
-    x[i,0] = (b[i,0] - summ)/U[i,i]
+      summ += U[i, k] * x[k, 0]
+    x[i, 0] = (b[i, 0] - summ)/U[i, i]
   return x
 
 def vandermonde(x, degree):
